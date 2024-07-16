@@ -61,16 +61,13 @@ def main():
         else:
             print(f"EFS folder found: {render_output_path}")
             
-            # 2. Comprimir a .zip la carpeta /output dentro de /output (output.zip)
             output_zip_path, zip_size = output_to_zip(render_output_path)
             print(f"output.zip created path: {output_zip_path}")
             print(f"Size of output.zip: {zip_size} bytes")
                 
-            # 3. Crear thumbnail de la primera imagen que haya en output, guardarlo en la misma ruta de files (efs project path env) como: _thumbnail.png
             thumbnail_path = generate_thumbnail(render_output_path, thumbnail_output_path)
             print(f"Thumbnail created path: {thumbnail_path}")
 
-            # 4. Upload the /output folder and output.zip to the specified S3 bucket
             response = upload_to_s3(render_output_path, output_zip_path, thumbnail_path)
             print(f"Upload to S3 response: {response}")
 
