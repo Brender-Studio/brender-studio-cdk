@@ -13,17 +13,33 @@ def setup_display(use_eevee):
         print('No se está usando Eevee')
         
         
-# Configurar el PYTHONPATH para incluir la ruta al directorio del proyecto
+# Configure the Python path and sys.path to include the project directory and its subfolders
 def setup_env_python_path(bucket_key):
     efs_project_path = f"/mnt/efs/projects/{bucket_key}"
-    print('Ruta al directorio del proyecto:', efs_project_path)
+    print('Project directory path:', efs_project_path)
     
-    # Añade la ruta de los paquetes de Python
+    # Add the Python packages path
     python_site_packages = '/usr/local/lib/python3.10/dist-packages'
-    os.environ['PYTHONPATH'] = f"{efs_project_path}:{python_site_packages}:{os.environ.get('PYTHONPATH', '')}"
+    current_pythonpath = os.environ.get('PYTHONPATH', '')
     
-    # Imprimir PYTHONPATH para depuración
+    # Add all project subfolders to PYTHONPATH
+    project_dirs = []
+    for root, dirs, files in os.walk(efs_project_path):
+        project_dirs.append(root)
+    
+    new_pythonpath = f"{':'.join(project_dirs)}:{python_site_packages}:{current_pythonpath}"
+    os.environ['PYTHONPATH'] = new_pythonpath
+    
+    # Print PYTHONPATH for debugging
     print("PYTHONPATH:", os.environ['PYTHONPATH'])
+
+    # Add paths to sys.path
+    for dir_path in project_dirs:
+        if dir_path not in sys.path:
+            sys.path.insert(0, dir_path)
+    
+    # Print sys.path for debugging
+    print("sys.path:", sys.path)
     
 
 # Obtener las variables de entorno
