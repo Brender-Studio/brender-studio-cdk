@@ -7,54 +7,50 @@ from configure_ses.get_ec2_details import get_ec2_instance_details
 
 def convert_bytes_to_mb(bytes_size):
     """
-    Convierte el tamaño de bytes a megabytes (MB)
+    Convierts the size in bytes to megabytes (MB)
     """
     mb_size = bytes_size / (1024 * 1024)
     return mb_size
 
 def convert_bytes_to_gb(bytes_size):
     """
-    Convierte el tamaño de bytes a gigabytes (GB)
+    Convierts the size in bytes to gigabytes (GB)
     """
     gb_size = bytes_size / (1024 * 1024 * 1024)
     return gb_size
 
 def total_seconds(time_str):
     """
-    Convierte una cadena de tiempo en formato HH:MM:SS a segundos totales
+    Convierts the time string in the format HH:MM:SS to total seconds
     """
     if ':' in time_str:
         h, m, s = map(int, time_str.split(':'))
         return h * 3600 + m * 60 + s
     else:
-        return int(time_str) * 60  # Si es un número en minutos, convertir a segundos totales
+        return int(time_str) * 60 
 
 def format_runtime(seconds):
     """
-    Formatea la cantidad de segundos en el formato HH:MM:SS
+    Formats the total seconds to HH:MM:SS
     """
     m, s = divmod(seconds, 60)
     h, m = divmod(m, 60)
     return f"{h:02d}:{m:02d}:{s:02d}"
 
 def format_expiration_datetime(expiration_datetime):
-    """
-    Formatea la fecha y hora de expiración en el formato deseado
-    """
-    # Definir los nombres de los meses en inglés
     months = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
     ]
     
-    # Obtener el día, mes, año y hora de la fecha de expiración
+    # Get the day, month, year, hour, and minute
     day = expiration_datetime.day
     month = months[expiration_datetime.month - 1]
     year = expiration_datetime.year
     hour = expiration_datetime.hour
     minute = expiration_datetime.minute
     
-    # Formatear la fecha y hora en el formato deseado
+    # Format the datetime string
     formatted_datetime = f"{day} {month}, {year} at {hour:02d}:{minute:02d}"
     
     return formatted_datetime
@@ -95,12 +91,12 @@ def send_render_ok_email(job_id, ses_config, render_details, zip_size, job_array
         ec2_instance_details = get_ec2_instance_details(job_id, region, job_array_size)
         print(f"EC2 Instance Details: {ec2_instance_details}")
 
-        # Verificar si ec2_instance_details es None y asignar valores predeterminados
+        # Verify if the response contains EC2 instance details
         if ec2_instance_details is None:
             instance_type = 'N/A'
             instance_lifecycle = 'N/A'
         else:
-            # extraer el tipo de instancia, familia, si es spot o on-demand
+            # Extract instance type and lifecycle
             instance_type = ec2_instance_details.get('InstanceType', 'N/A')
             instance_lifecycle = ec2_instance_details.get('InstanceLifecycle', 'N/A')
 
@@ -109,19 +105,19 @@ def send_render_ok_email(job_id, ses_config, render_details, zip_size, job_array
 
         ## Rendering time calculated: array job x runtime
         if int(job_array_size) > 0:
-            total_seconds_runtime = total_seconds(runtime) * int(job_array_size)  # Convertir a segundos totales
+            total_seconds_runtime = total_seconds(runtime) * int(job_array_size)
             total_runtime_formatted = format_runtime(total_seconds_runtime)
         else:
             total_runtime_formatted = runtime 
 
-        if zip_size > 1024 * 1024 * 1024:  # Si el tamaño es mayor a 1 GB
+        if zip_size > 1024 * 1024 * 1024:  # 1 GB
             object_size_str = f"{convert_bytes_to_gb(zip_size):.2f} GB"
         else:
             object_size_str = f"{convert_bytes_to_mb(zip_size):.2f} MB"
 
         expiration_datetime = datetime.now() + timedelta(hours=12)
 
-        # Definir los parámetros de la plantilla
+        # Define the template data for the email
         template_data = {
             'project_name': project_name,
             'resolution': resolution,
@@ -132,7 +128,6 @@ def send_render_ok_email(job_id, ses_config, render_details, zip_size, job_array
             'engine': engine,
             'render_type': render_type,
             'thumbnail_url': thumbnail_presigned_url,
-            # 'alternate_download_url': output_zip_presigned_url,
             'brender_download_url': output_zip_presigned_url,
             'execution_time': runtime,
             'object_size': object_size_str,
@@ -144,11 +139,10 @@ def send_render_ok_email(job_id, ses_config, render_details, zip_size, job_array
             'queue_type': instance_lifecycle,
             'aprox_execution_time': total_runtime_formatted,
             'instance_type': instance_type,
-            # url vantage: https://instances.vantage.sh/aws/ec2/g5.xlarge?region=ap-northeast-1&os=linux&cost_duration=hourly&reserved_term=Standard.noUpfront
             'instance_pricing_url': f"https://instances.vantage.sh/aws/ec2/{instance_type}?region={region}&os=linux&cost_duration=hourly&reserved_term=Standard.noUpfront"
         }
 
-        # Enviar el correo electrónico utilizando la plantilla
+        # Send the email using the SES client
         response = ses.send_templated_email(
             Source=source_email,
             Destination={'ToAddresses': [destination_email]},
@@ -156,12 +150,11 @@ def send_render_ok_email(job_id, ses_config, render_details, zip_size, job_array
             TemplateData=json.dumps(template_data)
         )
 
-        print("Correo electrónico enviado con éxito!")
-        print("ID de mensaje:", response['MessageId'])
+        print("Email sent successfully")
+        print("Message ID: ", response['MessageId'])
 
         return response
 
     except Exception as e:
-        # Capturar cualquier excepción y mostrar un mensaje de error
-        print("Error al enviar el correo electrónico:", e)
+        print("Error sending render ok email:", e)
         return None

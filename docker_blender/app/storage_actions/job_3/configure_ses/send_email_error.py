@@ -28,25 +28,25 @@ def send_render_error_email(ses_config, render_details, job_id, region, job_arra
         print(f"Runtime: {runtime}")
         print(f"Status: {status}")
 
-        # Manejar el caso donde status es None
+        # Get the status reason and log stream name
         if status is None:
             status_reason = "N/A"
             log_stream_name = "N/A"
         else:
-            # Obtener la razón del estado
+            # Extract the status reason and log stream name
             status_reason = status.get('reason', "N/A")
             log_stream_name = status.get('log_stream_name', "N/A")
 
-        # Transformar las barras diagonales en el formato adecuado para la URL, manejar el caso "N/A"
+        # The log link is constructed based on the log stream name
         if log_stream_name == "N/A":
             log_stream_name_encoded = "N/A"
             log_link = f"https://{ses_config['region']}.console.aws.amazon.com/cloudwatch/home?region={ses_config['region']}#logsV2:log-groups/log-group/%2Faws%2Fbatch%2Fjob"
         else:
             log_stream_name_encoded = quote_plus(log_stream_name)
-            # Construir la URL con el log_stream_name codificado
+            # Construct the log link using the log stream name
             log_link = f"https://{ses_config['region']}.console.aws.amazon.com/cloudwatch/home?region={ses_config['region']}#logsV2:log-groups/log-group/%2Faws%2Fbatch%2Fjob/log-events/{log_stream_name_encoded}"
 
-        # Definir los parámetros de la plantilla
+        # Prepare the template data for the email
         template_data = {
             'project_name': project_name,
             'reason_message': status_reason,
@@ -64,7 +64,7 @@ def send_render_error_email(ses_config, render_details, job_id, region, job_arra
 
         print("template_data:", template_data)
 
-        # Enviar el correo electrónico utilizando la plantilla
+        # Send the email using the SES client
         response = ses.send_templated_email(
             Source=source_email,
             Destination={'ToAddresses': [destination_email]},
@@ -72,12 +72,11 @@ def send_render_error_email(ses_config, render_details, job_id, region, job_arra
             TemplateData=json.dumps(template_data)
         )
 
-        print("Correo electrónico enviado con éxito!")
-        print("ID de mensaje:", response['MessageId'])
+        print("Email sent successfully")
+        print("Message ID: ", response['MessageId'])
 
         return response
 
     except Exception as e:
-        # Capturar cualquier excepción y mostrar un mensaje de error
-        print("Error al enviar el correo electrónico:", e)
+        print("Error sending render error email:", e)
         return None

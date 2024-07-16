@@ -57,7 +57,7 @@ def main():
     scene.frame_start = 1
     scene.frame_end = len(images)
     
-    # Nombre del archivo de salida
+    # Name of the output file
     output_filepath = os.path.join(full_preview_path, 'bs_full_resolution_')
     bpy.context.scene.render.filepath = output_filepath
 
