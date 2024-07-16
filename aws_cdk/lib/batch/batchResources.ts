@@ -69,7 +69,7 @@ export function createBatchResources(scope: Construct, props: BatchResourcesProp
     const s3Policy = createS3Policy(scope, { s3BucketName })
     const batchPolicy = createBatchPolicy(scope);
 
-    // obtener todas las subnets de la vpc
+    // Get all subnets
     const allSubnets = vpc.selectSubnets({
         subnetType: isPrivate ? SubnetType.PRIVATE_WITH_EGRESS : SubnetType.PUBLIC
     }).subnets;
