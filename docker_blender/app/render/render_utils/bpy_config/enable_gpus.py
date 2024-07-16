@@ -23,8 +23,6 @@ def enable_gpus(device_type, use_cpus):
 
     for scene in bpy.data.scenes:
             scene.cycles.device = "GPU"
-            scene.cycles.use_denoising = True
-
-    print("Activated GPUs:", activated_gpus)
+        #     scene.cycles.use_denoising = True
 
     return activated_gpus

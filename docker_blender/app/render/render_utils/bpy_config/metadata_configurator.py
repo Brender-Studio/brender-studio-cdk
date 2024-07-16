@@ -29,4 +29,3 @@ def set_metadata():
 def note_stamp_metadata():
     bpy.context.scene.render.stamp_note_text = "Brender Studio"
 
-    # TODO: obtener el texto de la nota de las propiedades del contenedor de trabajo de aws batch y el tipo de instancia de EC2

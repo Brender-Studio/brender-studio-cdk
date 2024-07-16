@@ -17,8 +17,8 @@ def set_camera(camera_name):
     try:
         bpy.context.scene.camera = bpy.data.objects[camera_name]
     except KeyError as e:
-        print(f"Error: No se pudo encontrar el objeto de la cámara con el nombre '{camera_name}' en la escena.")
-        print("Detalle del error:", e)
+        print(f"Error: No camera named '{camera_name}' found in the scene.")
+        print("Error:", e)
 
 def set_resolution(resolution_width, resolution_height, resolution_percentage):
     bpy.context.scene.render.resolution_x = resolution_width

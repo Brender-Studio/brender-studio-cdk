@@ -1,8 +1,6 @@
 import sys
 import os
 
-# aws_batch_job_index = int(os.environ['AWS_BATCH_JOB_ARRAY_INDEX'])
-# aws_batch_array_size = int(os.environ['AWS_BATCH_JOB_ARRAY_SIZE'])
 output_path = os.environ['EFS_BLENDER_OUTPUT_FOLDER_PATH']
 
 
@@ -91,11 +89,11 @@ def build_sys_args_by_render_type(json_blender_render):
             "-active_frame", str(render_config['active_frame']),
         ])
 
-        # Solo extender los sys args common si no es render auto
+        # Only extend common sys args if not render auto
         if not render_config['is_render_auto']:
             sys_args.extend(common_sys_args)
 
-        # Solo extender los sys args cycles si el engine es CYCLES y no es render auto
+        # Only extend cycles sys args if engine is CYCLES and not render auto
         if render_config['engine'] == "CYCLES" and not render_config['is_render_auto']:
             sys_args.extend(cycles_sys_args)
 
@@ -111,7 +109,7 @@ def build_sys_args_by_render_type(json_blender_render):
         end_frame = int(render_config['end_frame'])
         frame_step = int(render_config['frame_step'])
 
-        # Llamar funcion para calcular el frame activo segun el array job de aws batch
+        # Calculate active frame
         active_frame = calculate_active_frame(aws_batch_job_index, start_frame, frame_step)
 
         # Extend sys args with animation specific args
@@ -123,7 +121,7 @@ def build_sys_args_by_render_type(json_blender_render):
             "-frame_step", str(frame_step),
         ])
 
-        # Solo extender los sys args common si no es render auto
+        # Only extend common sys args if not render auto
         if not render_config['is_render_auto']:
             sys_args.extend(common_sys_args)
         
