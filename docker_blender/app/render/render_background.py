@@ -1,3 +1,14 @@
+import bpy
+import sys
+import os
+
+version = bpy.app.version
+print(f"Blender version: {version}")
+
+if version >= (4, 2, 0):
+    # Append the path to the sys.path
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
+
 from argparse import Namespace
 from render.render_utils.bpy_config import enable_gpus
 from render.render_utils.bpy_config.render_frame import render_still
@@ -7,8 +18,6 @@ from render.render_utils.bpy_config.scene_configurator import set_scene_name, se
 from render.render_utils.bpy_config.set_scene_data_by_engine import set_cycles_config, set_eevee_config
 from render.render_utils.bpy_config.metadata_configurator import set_metadata
 
-import bpy
-import sys
 
 def main():
     parser = create_parser()
@@ -89,6 +98,12 @@ def main():
         # Configure scene data by engine
         if args.engine == "CYCLES":
             print("engine:", args.engine)
+
+            # set cycles engine
+            bpy.context.scene.render.engine = 'CYCLES'
+            engine = bpy.context.scene.render.engine
+            print(f"Engine: {engine}")
+
             # Call function to configure cycles config
             set_cycles_config(args.use_gpu,
                               args.denoise, 
@@ -115,6 +130,17 @@ def main():
             
         if args.engine == "BLENDER_EEVEE":
             print("engine:", args.engine)
+
+             # If version >= 4.2.0 then bpy.context.scene.render.engine = 'BLENDER_EEVEE_NEXT'
+
+            if version >= (4, 2, 0):
+                bpy.context.scene.render.engine = 'BLENDER_EEVEE_NEXT'
+                engine = bpy.context.scene.render.engine
+                print(f"Engine: {engine}")
+            else:
+                bpy.context.scene.render.engine = 'BLENDER_EEVEE'
+                engine = bpy.context.scene.render.engine
+                print(f"Engine Legacy: {engine}")
 
             if args.render_type == "frame":
                 render_still(args.active_frame)
