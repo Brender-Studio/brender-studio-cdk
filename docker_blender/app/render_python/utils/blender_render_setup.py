@@ -4,13 +4,12 @@ import sys
 # Configurar el display para usar Eevee
 def setup_display(use_eevee):
     if use_eevee == True:
-        print('Usando Eevee')
-        print('Abriendo display')
+        print('Using Eevee')
         os.system('Xvfb :1 -screen 0 1280x720x16 &')
         os.environ['DISPLAY'] = ':1'
-        print('Display abierto')
+        print('Display opened')
     else:
-        print('No se está usando Eevee')
+        print('Not using Eevee')
         
         
 # Configure the Python path and sys.path to include the project directory and its subfolders
@@ -42,7 +41,7 @@ def setup_env_python_path(bucket_key):
     print("sys.path:", sys.path)
     
 
-# Obtener las variables de entorno
+# Get the environment variables
 def get_environment_variables():
     env_vars = {
         'user_main_script_path': os.environ.get('EFS_MAIN_SCRIPT_PATH'),
@@ -55,8 +54,8 @@ def get_environment_variables():
     return env_vars
 
 
-# Validar que las variables de entorno estén configuradas correctamente
+# Validate the environment variables
 def validate_environment_variables(env_vars):
     if not all(env_vars.values()):
-        print("Error: Una o más variables de entorno no están configuradas correctamente.")
+        print("Error: One or more environment variables are missing.")
         sys.exit(1)

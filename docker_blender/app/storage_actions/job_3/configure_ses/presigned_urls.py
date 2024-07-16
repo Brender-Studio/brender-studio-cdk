@@ -7,7 +7,6 @@ import boto3.session
 bucket_name = os.environ.get('BUCKET_NAME')
 bucket_key = os.environ.get('BUCKET_KEY')
 
-# review args if needed!!!
 
 def generate_presigned_urls(region):
     try:

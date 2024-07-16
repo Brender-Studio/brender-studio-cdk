@@ -15,7 +15,6 @@ def find_files_with_prefix(directory, prefix):
 def upload_animation_videos(efs_project_path):
 
     # Upload the /output folder and output.zip to the specified S3 bucket
-    print("Subiendo a S3...")
     s3 = boto3.client('s3')
 
     try:
@@ -25,15 +24,15 @@ def upload_animation_videos(efs_project_path):
         for playblast_file in playblast_files:
             s3_key = f"{bucket_key}/{os.path.basename(playblast_file)}"
             s3.upload_file(playblast_file, bucket_name, s3_key)
-            print(f"Archivo subido: {playblast_file} a {s3_key}")
+            print(f"File uploaded: {playblast_file} to {s3_key}")
 
         for full_resolution_file in full_resolution_files:
             s3_key = f"{bucket_key}/output/{os.path.basename(full_resolution_file)}"
             s3.upload_file(full_resolution_file, bucket_name, s3_key)
-            print(f"Archivo subido: {full_resolution_file} a {s3_key}")
+            print(f"File uploaded: {full_resolution_file} to {s3_key}")
 
-        print("¡Carga completa!")
+        print("Upload complete to S3")
         return True
     except ClientError as e:
-        print(f"Error al subir archivos a S3: {e}")
+        print(f"Error uploading files to s3 {e}")
         return False

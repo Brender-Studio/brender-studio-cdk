@@ -7,7 +7,7 @@ def configure_cycles_denoise(use_gpu, use_denoise, dn_alg, dn_pass, dn_prefilter
 
     bpy.context.scene.render.engine = "CYCLES"
 
-    # Usar denoising en Cycles
+    # Use denoising 
     bpy.context.scene.cycles.use_denoising = use_denoise
     # Denoise passes (albedo, normal, ...)
     bpy.context.scene.cycles.denoising_data_passes = dn_pass
@@ -20,8 +20,6 @@ def configure_cycles_denoise(use_gpu, use_denoise, dn_alg, dn_pass, dn_prefilter
         print("Denoising enabled")
 
         if dn_alg == "OPTIX" and use_gpu:
-            # bpy.context.scene.cycles.use_denoising = True
-            # bpy.context.view_layer.cycles.use_denoising = True
             bpy.context.scene.cycles.denoiser = 'OPTIX'
             print("Denoiser set to:", bpy.context.scene.cycles.denoiser)
         else:

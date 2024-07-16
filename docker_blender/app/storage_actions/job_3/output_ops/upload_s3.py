@@ -7,7 +7,7 @@ bucket_key = os.environ.get('BUCKET_KEY')
 
 def upload_to_s3(render_output_path, zip_path, thumbnail_path):
     if not (bucket_name and bucket_key):
-        print("Error: Falta alguna variable de entorno.")
+        print("Error: BUCKET_NAME and BUCKET_KEY environment variables are required")
         return False
 
     # Upload the /output folder and output.zip to the specified S3 bucket
@@ -23,8 +23,8 @@ def upload_to_s3(render_output_path, zip_path, thumbnail_path):
 
         s3.upload_file(zip_path, bucket_name, f"{bucket_key}/output.zip")
         s3.upload_file(thumbnail_path, bucket_name, f"{bucket_key}/bs_thumbnail.png")
-        print("¡Carga completa!")
+        print("Files uploaded to S3")
         return True
     except ClientError as e:
-        print(f"Error al subir archivos a S3: {e}")
+        print(f"Error uploading to S3: {e}")
         return False

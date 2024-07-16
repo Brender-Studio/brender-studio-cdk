@@ -49,8 +49,6 @@ RUN pip3 install boto3 requests Wand
 
 # EFS ENV
 ENV EFS_BLENDER_FOLDER_PATH=/mnt/efs/projects
-# ENV EFS_BLENDER_OUTPUT_FOLDER_PATH=/mnt/efs/projects/3.0/output
-# ENV EFS_BLENDER_FILE_PATH=/mnt/efs/projects/3.0/3_0_scene.blend
 
 # Blender ENV
 ENV BLENDER_EXECUTABLE=/usr/bin/blender
@@ -66,7 +64,6 @@ RUN chmod +x /app/app.py
 
 WORKDIR /app
 
-# ENV PYTHONPATH=/app:$PYTHONPATH
 ENV PYTHONPATH=/app:/mnt/efs/projects:$PYTHONPATH
 
 

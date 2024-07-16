@@ -3,7 +3,6 @@ from datetime import datetime, timedelta, timezone
 
 def get_batch_job_info(job_id, region, render_details, job_array_size):
     try:
-        # Crear cliente de AWS Batch
         batch_client = boto3.client('batch', region_name=region)
 
         # Render type Animation or Still
@@ -15,21 +14,20 @@ def get_batch_job_info(job_id, region, render_details, job_array_size):
         else:
             job_id = job_id
 
-        # Obtener detalles del trabajo
+        # Get job details from AWS Batch
         response = batch_client.describe_jobs(jobs=[job_id])
 
-        # Verificar si se recibió una respuesta válida
+        # Verify if the response contains job details
         if 'jobs' not in response or len(response['jobs']) == 0:
             raise ValueError(f"No se encontraron detalles para el trabajo con ID {job_id}")
 
-        # Extraer información sobre el trabajo de AWS Batch
+        # Extract job information from the response
         job_info = response['jobs'][0]
 
-        # Inicializar variables para el tiempo de inicio y finalización
         start_time_ms = None
         end_time_ms = None
 
-        # Verificar si se proporcionaron las claves necesarias para calcular el tiempo de ejecución
+        # Verify if the job has started and stopped times
         if 'startedAt' in job_info and 'stoppedAt' in job_info:
             start_time_ms = job_info['startedAt']
             end_time_ms = job_info['stoppedAt']
@@ -39,47 +37,47 @@ def get_batch_job_info(job_id, region, render_details, job_array_size):
             start_time_ms = created_at_ms
             end_time_ms = current_time_ms
         else:
-            raise ValueError("La respuesta de AWS Batch no contiene la información necesaria")
+            raise ValueError("AWS Batch job does not have a start or end time")
 
-        # Calcular tiempo de ejecución si se proporcionaron los tiempos de inicio y finalización
+        # Calculate runtime of the job
         if start_time_ms is not None and end_time_ms is not None:
             runtime_formatted = calculate_runtime(start_time_ms, end_time_ms)
         else:
-            runtime_formatted = "Tiempo de ejecución no disponible"
+            runtime_formatted = "N/A"
 
-        # Obtener información de estado del trabajo
+        # Get status information of the job
         status_info = get_status_info(job_info)
 
         return runtime_formatted, status_info
     
     except Exception as e:
-        print(f"Ocurrió un error al obtener detalles del trabajo: {e}")
+        print(f"Error getting job details: {e}")
         return None, None
 
 def calculate_runtime(start_time_ms, end_time_ms):
-    # Convertir de milisegundos a segundos
+    # Convert milliseconds to seconds
     start_time_seconds = start_time_ms / 1000
     end_time_seconds = end_time_ms / 1000
 
-    # Convertir a objetos datetime en UTC
+    # Convert seconds to datetime objects
     start_datetime = datetime.fromtimestamp(start_time_seconds, tz=timezone.utc)
     end_datetime = datetime.fromtimestamp(end_time_seconds, tz=timezone.utc)
 
-    # Calcular tiempo de ejecución
+    # Calculate runtime in seconds
     runtime_seconds = (end_datetime - start_datetime).total_seconds()
 
-    # Obtener horas, minutos y segundos
+    # Get hours, minutes, and seconds from runtime in seconds
     hours, remainder = divmod(runtime_seconds, 3600)
     minutes, seconds = divmod(remainder, 60)
 
-    # Formatear el tiempo de ejecución como HH:MM:SS
+    # Format runtime as HH:MM:SS
     runtime_formatted = "{:02}:{:02}:{:02}".format(int(hours), int(minutes), int(seconds))
 
     return runtime_formatted
 
 def get_status_info(job_info):
     try:
-        # Obtener información de estado del trabajo
+        # Get the reason and log stream name from the first attempt of the job
         reason = job_info['attempts'][0]['container']['reason']
         log_stream_name = job_info['attempts'][0]['container']['logStreamName']
         status_info = {
@@ -87,7 +85,7 @@ def get_status_info(job_info):
             "log_stream_name": log_stream_name
         } 
 
-        # si no hay información de estado, devolver un mensaje predeterminado
+        # If the reason or log stream name are not available, set them to a default value
         if reason is None:
             status_info['reason'] = "Information not available for this job."
         if log_stream_name is None:
@@ -96,5 +94,5 @@ def get_status_info(job_info):
 
         return status_info
     except Exception as e:
-        print(f"Ocurrió un error al obtener la información de estado del trabajo: {e}")
+        print(f"Error getting status info: {e}")
         return None
