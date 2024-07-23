@@ -24,6 +24,9 @@ try:
     # Get the list of objects from the response
     objects = response.get('Contents', [])
 
+    if not objects:
+        raise Exception(f"No objects found in S3 with prefix: {bucket_key}")
+
     # Copy each object to the EFS folder
     for obj in objects:
         obj_key = obj['Key']

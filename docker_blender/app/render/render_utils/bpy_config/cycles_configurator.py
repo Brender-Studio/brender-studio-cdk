@@ -1,6 +1,5 @@
 import bpy
 
-# Configura el denoising en Cycles
 def configure_cycles_denoise(use_gpu, use_denoise, dn_alg, dn_pass, dn_prefilter, noise_threshold):
     for device in bpy.context.preferences.addons["cycles"].preferences.devices:
             print(f"Device: {device.name}, Type: {device.type}, Use: {device.use}")

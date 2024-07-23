@@ -1,5 +1,6 @@
 import sys
 import os
+import shlex
 
 output_path = os.environ['EFS_BLENDER_OUTPUT_FOLDER_PATH']
 
@@ -36,9 +37,9 @@ def build_sys_args_by_render_type(json_blender_render):
     sys_args = build_sys_args(render_config)
 
     common_sys_args = [
-        "-S", render_info['scene_name'],
-        "-L", render_info['layer_name'],
-        "-C", render_info['camera_name'],
+        "-S", shlex.quote(render_info['scene_name']),
+        "-L", shlex.quote(render_info['layer_name']),
+        "-C", shlex.quote(render_info['camera_name']),
         "-ar_h", str(render_info['aspect_ratio']['height']),
         "-ar_w", str(render_info['aspect_ratio']['width']),
         "-res_h", str(render_info['resolution']['height']),
@@ -48,7 +49,7 @@ def build_sys_args_by_render_type(json_blender_render):
         "-color_mode", render_info['output']['color']['color_mode'],
         "-compression", str(render_info['output']['compression']),
         "-output_format", render_info['output']['output_format'],
-        "-project_name", render_info['output']['project_name'],
+        "-project_name", shlex.quote(render_info['output']['project_name']),
         "-output_path", output_path,
     ]
 
@@ -125,7 +126,7 @@ def build_sys_args_by_render_type(json_blender_render):
         if not render_config['is_render_auto']:
             sys_args.extend(common_sys_args)
         
-        # Solo extender los sys args cycles si el engine es CYCLES y no es render auto
+        # Only extend cycles sys args if engine is CYCLES and not render auto
         if render_config['engine'] == "CYCLES" and not render_config['is_render_auto']:
             sys_args.extend(cycles_sys_args)
 

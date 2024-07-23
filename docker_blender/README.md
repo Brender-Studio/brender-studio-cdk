@@ -72,6 +72,6 @@ The main environment variables used are:
 
 We recommend local testing with devcontainers. You can use the Visual Studio Code extension "Remote - Containers" to run the development container.
 
-In this repository [brender-studio-devcontainer](link), you'll find an example of how to set up a devcontainer for working with Brender Studio.
+In this repository [brender-studio-devcontainer](https://github.com/Brender-Studio/brender-studio-devcontainer), you'll find an example of how to set up a devcontainer for working with Brender Studio.
 
 The devcontainer attempts to replicate the production environment as faithfully as possible, facilitating development and debugging of issues.

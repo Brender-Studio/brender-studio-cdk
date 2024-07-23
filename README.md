@@ -53,6 +53,31 @@ cdk deploy --context stackName=BRENDER-STACK-DEMO \
            --region us-east-1
 ```
 
+## Related Repositories
+
+### Brender Studio DevContainer
+
+For local development and testing, we provide a DevContainer environment that mirrors the production setup. This allows developers to work on Blender scripts and rendering workflows locally before deploying to AWS.
+
+Repository: [brender-studio-devcontainer](https://github.com/Brender-Studio/brender-studio-devcontainer)
+
+The DevContainer repository includes:
+- A Dockerfile that replicates the production environment
+- Sample Blender scenes for testing
+- Scripts to run different job types locally
+- VS Code configuration for easy setup and use
+
+We recommend using the DevContainer for initial development and testing before deploying changes to this CDK-based production environment.
+
+### Brender Studio App
+
+The main application that interacts with this infrastructure:
+
+Repository: [brender-studio-app](https://github.com/Brender-Studio/brender-studio-app)
+
+This application initiates the deployment process and interacts with the rendered infrastructure.
+
+
 ## References
 
 This project makes use of several AWS services and other technologies:

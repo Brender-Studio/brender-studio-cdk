@@ -7,7 +7,7 @@ from configure_ses.get_ec2_details import get_ec2_instance_details
 
 def convert_bytes_to_mb(bytes_size):
     """
-    Convierts the size in bytes to megabytes (MB)
+    Converts the size in bytes to megabytes (MB)
     """
     mb_size = bytes_size / (1024 * 1024)
     return mb_size

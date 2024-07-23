@@ -49,8 +49,8 @@ def main():
 
         # Check if the specified EFS folder exists
         if not os.path.exists(render_output_path) or not os.listdir(render_output_path):
-            print(f"EFS folder not found: {render_output_path}") # Eso es que no hay renders guardados en el path
-            # SI ses_active es True, enviar correo de error, si es False, terminar el proceso
+            print(f"EFS folder not found: {render_output_path}") # No files in the folder (renders failed)
+            # If SES is active, send an email with the error message
             if ses_active:
                 response = send_render_error_email(ses_config, render_details, job_id, region, job_array_size)
                 print(f"Send email response: {response}")

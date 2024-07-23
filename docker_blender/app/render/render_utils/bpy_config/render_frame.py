@@ -21,7 +21,7 @@ def render_still(active_frame):
     # Set the render file path for the frame
     render_file_path = os.path.join(output_path, f"{active_frame:05d}")
     
-    print("Valor de render_file_path:", render_file_path)
+    print("render_file_path:", render_file_path)
 
     # Set the render file path in the scene
     bpy.context.scene.render.filepath = render_file_path
