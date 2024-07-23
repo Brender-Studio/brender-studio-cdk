@@ -1,7 +1,7 @@
 import os
 import sys
 
-# Configurar el display para usar Eevee
+# Configure the virtual display
 def setup_display(use_eevee):
     if use_eevee == True:
         print('Using Eevee')

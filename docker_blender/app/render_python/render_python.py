@@ -8,7 +8,7 @@ def main():
     env_vars = get_environment_variables()
     validate_environment_variables(env_vars)
     env_vars['use_eevee'] = convert_to_boolean(env_vars['use_eevee'])
-    print('Valor de use_eevee como booleano:', env_vars['use_eevee'])
+    print('use_eevee:', env_vars['use_eevee'])
     setup_env_python_path(env_vars['bucket_key'])
     setup_display(env_vars['use_eevee'])
     run_blender_command(env_vars)
