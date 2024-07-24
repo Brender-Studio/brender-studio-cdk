@@ -2,6 +2,15 @@ import bpy
 import sys
 import os
 from argparse import Namespace
+
+version = bpy.app.version
+print(f"Blender version: {version}")
+
+if version >= (4, 2, 0):
+    print("Python path:", sys.path)
+    sys.path.append('/app') 
+
+
 from storage_actions.job_3.animation_ops.animation_parser import create_parser
 
 
