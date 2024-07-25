@@ -6,7 +6,7 @@ output_path = os.environ['EFS_BLENDER_OUTPUT_FOLDER_PATH']
 
 
 def calculate_active_frame(aws_batch_job_index, start_frame, frame_step):
-    if aws_batch_job_index == 0:
+    if aws_batch_job_index is None or aws_batch_job_index == 0:
         return start_frame 
     else:
         return start_frame + (aws_batch_job_index * frame_step)
@@ -103,8 +103,8 @@ def build_sys_args_by_render_type(json_blender_render):
       
 
     elif render_type == "animation":
-        aws_batch_job_index = int(os.environ['AWS_BATCH_JOB_ARRAY_INDEX'])
-        aws_batch_array_size = int(os.environ['AWS_BATCH_JOB_ARRAY_SIZE'])
+        aws_batch_job_index = int(os.environ.get('AWS_BATCH_JOB_ARRAY_INDEX', 0))
+        aws_batch_array_size = int(os.environ.get('AWS_BATCH_JOB_ARRAY_SIZE', 1))
         print("Animation render type detected")
         start_frame = int(render_config['start_frame'])
         end_frame = int(render_config['end_frame'])
