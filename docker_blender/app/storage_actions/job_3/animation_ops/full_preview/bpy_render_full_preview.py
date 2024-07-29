@@ -9,19 +9,17 @@ print(f"Blender version: {version}")
 if version >= (4, 2, 0):
     print("Python path:", sys.path)
     sys.path.append('/app') 
-  
-from storage_actions.job_3.animation_ops.animation_parser import create_parser
 
+from storage_actions.job_3.animation_ops.animation_parser import create_parser
 
 def main():
     print("bpy script playblast")
     parser = create_parser()
-    
+
     argv = sys.argv
     argv = argv[argv.index("--") + 1:]
 
     bpy.app.driver_namespace['argv'] = argv
-    
 
     args: Namespace = parser.parse_args(bpy.app.driver_namespace['argv'])
 
@@ -40,13 +38,13 @@ def main():
 
     scene.render.fps = args.fps
     scene.render.image_settings.file_format = 'FFMPEG'
-    scene.render.ffmpeg.format = args.ffmpeg_format # 'MPEG4'
+    scene.render.ffmpeg.format = args.ffmpeg_format
     scene.render.ffmpeg.codec = video_codec
     scene.render.ffmpeg.constant_rate_factor = output_quality
     scene.render.ffmpeg.ffmpeg_preset = encoding_speed
     scene.render.ffmpeg.use_autosplit = autosplit
 
-    # color management
+    # Color management settings
     scene.view_settings.view_transform = 'Standard'
     scene.view_settings.look = 'None'
 
@@ -55,17 +53,32 @@ def main():
     full_preview_path = args.efs_project_path
     print("Playblast path:", full_preview_path)
 
+    # Craete a new video sequence
     seq = bpy.context.scene.sequence_editor_create()
-    images = sorted([f for f in os.listdir(output_folder) if f.endswith(('.png', '.jpg', '.jpeg', '.exr', '.tif', '.tiff', '.bmp', '.tga', '.cin', '.dpx', '.hdr', '.webp'))])
 
+    # Find all images in the output folder
+    image_extensions = ('.png', '.jpg', '.jpeg', '.exr', '.tif', '.tiff', '.bmp', '.tga', '.cin', '.dpx', '.hdr', '.webp')
+    images = []
+
+    for root, _, files in os.walk(output_folder):
+        # Exclude compositor directories 
+        if any('compositor' in part.lower() for part in root.split(os.path.sep)):
+            continue  # Ignore compositor directories
+        for file in files:
+            if file.lower().endswith(image_extensions):
+                images.append(os.path.join(root, file))
+
+    # Sort the images by name
+    images.sort()
+
+    # Add the images to the video sequence
     for index, image in enumerate(images):
-        filepath = os.path.join(output_folder, image)
-        seq_strip = seq.sequences.new_image(name=image, filepath=filepath, channel=1, frame_start=index+1)
+        seq.sequences.new_image(name=os.path.basename(image), filepath=image, channel=1, frame_start=index+1)
 
+    # Set the start and end frames
     scene.frame_start = 1
     scene.frame_end = len(images)
-    
-    # Name of the output file
+
     output_filepath = os.path.join(full_preview_path, 'bs_full_resolution_')
     bpy.context.scene.render.filepath = output_filepath
 
