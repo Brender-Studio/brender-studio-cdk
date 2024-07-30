@@ -30,4 +30,36 @@ def render_still(active_frame):
     bpy.ops.render.render(write_still=True)
 
 
+def render_still_without_compositor(scene_name, layer_name, active_frame):
+    
+    if scene_name in bpy.data.scenes:
+        scene = bpy.data.scenes[scene_name]
+        bpy.context.window.scene = scene
+    else:
+        print(f"Error: Scene '{scene_name}' not found.")
+        return
+
+    # Configure the active layer
+    for layer in scene.view_layers:
+        layer.use = (layer.name == layer_name)
+
+    scene.use_nodes = True
+    render_layer_node = scene.node_tree.nodes.get("Render Layers")
+    if render_layer_node:
+        render_layer_node.layer = layer_name
+    else:
+        print("Error: Render Layer node not found.")
+        return
+
+    # Set the active frame 
+    scene.frame_set(active_frame)
+
+    print("output_path:", output_path)
+
+    output_file = os.path.join(output_path, f"{layer_name}_{active_frame:05d}")
+    scene.render.filepath = output_file
+
+    bpy.ops.render.render(write_still=True)
+
+    print(f"Rendered frame {active_frame} of layer {layer_name}.")
     

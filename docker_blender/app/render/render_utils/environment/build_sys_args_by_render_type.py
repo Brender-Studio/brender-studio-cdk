@@ -91,8 +91,10 @@ def build_sys_args_by_render_type(json_blender_render):
         ])
 
         # Only extend common sys args if not render auto
-        if not render_config['is_render_auto']:
-            sys_args.extend(common_sys_args)
+        # if not render_config['is_render_auto']:
+        #     sys_args.extend(common_sys_args)
+        
+        sys_args.extend(common_sys_args)
 
         # Only extend cycles sys args if engine is CYCLES and not render auto
         if render_config['engine'] == "CYCLES" and not render_config['is_render_auto']:
