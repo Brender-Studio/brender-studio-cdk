@@ -44,7 +44,7 @@ def configure_compositor_nodes():
         file_output_nodes = [node for node in compositor_context.nodes if node.bl_idname == "CompositorNodeOutputFile"]
 
         for index, file_output_node in enumerate(file_output_nodes):
-            node_output_path = os.path.join(output_path, f"compositor_output_{index}")
+            node_output_path = f"{output_path}/compositor_output_{index}/"
             if not os.path.exists(node_output_path):
                 os.makedirs(node_output_path)
                 print(f"Created output directory for node {index}: {node_output_path}")
