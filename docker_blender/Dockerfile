@@ -44,7 +44,7 @@ RUN curl "${BLENDER_URL}" -o "blender.tar.xz" && \
     rm -rf blender.tar.xz && \
     rm -rf blender
 
-RUN pip3 install boto3 requests Wand
+RUN pip3 install boto3 requests Wand Pillow
 
 # EFS ENV
 ENV EFS_BLENDER_FOLDER_PATH=/mnt/efs/projects
