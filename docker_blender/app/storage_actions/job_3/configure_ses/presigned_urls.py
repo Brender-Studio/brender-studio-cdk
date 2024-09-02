@@ -12,7 +12,7 @@ def generate_presigned_urls(region):
     try:
         session = boto3.session.Session(region_name=region)
         
-        s3_client = session.client('s3', config=Config(signature_version='s3v4'))
+        s3_client = session.client('s3', config=Config(signature_version='s3v4', region_name=region))
 
         # Generate presigned url for thumbnail
         thumbnail_presigned_url = s3_client.generate_presigned_url(
