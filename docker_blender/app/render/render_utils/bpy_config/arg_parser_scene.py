@@ -38,7 +38,7 @@ def create_parser():
     parser.add_argument("-color_mode", help="Color mode", required=False, type=str)
     parser.add_argument("-compression", help="Compression", required=False, type=int)
     parser.add_argument("-output_format", help="Output format", required=False, type=str)
-    parser.add_argument("-fps", help="FPS", required=False, type=int) # review type
+    parser.add_argument("-fps", help="FPS", required=False, type=float)
     # cycles
     parser.add_argument("-dn_alg", help="Denoise algorithm", required=False, type=str)
     parser.add_argument("-dn", "--denoise", help="Use denoise", required=False, type=str_to_bool)
